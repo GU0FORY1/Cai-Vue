@@ -36,7 +36,7 @@ class Ref {
 }
 
 // effectWatch的实现
-function effectWatch(effect) {
+export function effectWatch(effect) {
     cureffect = effect;
     //a.depend()
     //一上来会调用一次
@@ -45,16 +45,16 @@ function effectWatch(effect) {
 }
 
 //类似ref的实现
-let a = new Ref(1);
-let b = 0;
+// let a = new Ref(1);
+// let b = 0;
 
-effectWatch(() => {
-  console.log("effct执行了");
-  b = a.value + 20;
-});
+// effectWatch(() => {
+//   console.log("effct执行了");
+//   b = a.value + 20;
+// });
 
-a.value = 80;
-console.log(a.value,b)
+// a.value = 80;
+// console.log(a.value,b)
 
 
 // 自己的尝试
@@ -94,7 +94,7 @@ function getRef(target,key) {
       }
       return ref
 }
-function reactive(raw) {
+export function reactive(raw) {
   //对每个key进行响应式处理，使用proxy，可以批量对key进行get/set操作
   return new Proxy(raw,{
     //target 目标对象 key访问键值
@@ -119,12 +119,12 @@ function reactive(raw) {
   
 }
 
-let c = reactive({
-  name:'666'
-})
+// let c = reactive({
+//   name:'666'
+// })
 
-effectWatch(()=>{
-  console.log('执行更新')
-})
-c.name = '999'
-console.log(c)
+// effectWatch(()=>{
+//   console.log('执行更新')
+// })
+// c.name = '999'
+// console.log(c)
