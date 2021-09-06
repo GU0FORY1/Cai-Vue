@@ -1,2 +1,2 @@
-# CaiB-Vue
-一个菜逼的mini-vue学习笔记
+# Cai-Vue
+一个菜逼的简易vue学习实现笔记
