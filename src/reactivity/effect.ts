@@ -11,7 +11,8 @@ class ReactiveEffect {
   }
   run() {
     activeEffect = this;
-    this._fn();
+    //runner运行后 要的返回值
+    return this._fn();
   }
 }
 // 用来存储不同对象的deps
@@ -39,13 +40,13 @@ export function trigger(target, key) {
   let dep = despMap.get(key);
   // for of 遍历数组 forin遍历对象
   for (const effect of dep) {
-    console.log(effect);
     effect.run();
   }
 }
 //依赖收集
 export function effect(fn) {
   const _effect = new ReactiveEffect(fn);
-
   _effect.run();
+  // _effect bind里面的this
+  return _effect.run.bind(_effect);
 }
