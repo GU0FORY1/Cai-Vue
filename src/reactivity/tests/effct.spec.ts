@@ -28,4 +28,31 @@ describe("effect", () => {
     runner();
     expect(foo).toBe(12);
   });
+
+  it("scheduler的实现 ", () => {
+    /**
+     * effect接受scheduler这个参数
+     * 第一次scheduler不执行 执行fn
+     * set update时 scheduler执行
+     * runner时还是执行fn
+     */
+    let sum;
+    let run;
+    const scheduler = jest.fn(() => {
+      run = runner;
+    });
+    const obj = reactive({ count: 1 });
+    const runner = effect(
+      () => {
+        sum = obj.count;
+      },
+      { scheduler }
+    );
+    expect(scheduler).not.toHaveBeenCalled();
+    expect(sum).toBe(1);
+    obj.count++;
+    expect(scheduler).toHaveBeenCalledTimes(1);
+    run();
+    expect(sum).toBe(2);
+  });
 });

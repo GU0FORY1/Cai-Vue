@@ -5,8 +5,7 @@ let activeEffect;
 // 依赖收集类
 class ReactiveEffect {
   private _fn: any;
-
-  constructor(fn) {
+  constructor(fn, public scheduler?) {
     this._fn = fn;
   }
   run() {
@@ -40,13 +39,19 @@ export function trigger(target, key) {
   let dep = despMap.get(key);
   // for of 遍历数组 forin遍历对象
   for (const effect of dep) {
-    effect.run();
+    if (effect.scheduler) {
+      effect.scheduler();
+    } else {
+      effect.run();
+    }
   }
 }
 //依赖收集
-export function effect(fn) {
-  const _effect = new ReactiveEffect(fn);
+export function effect(fn, options: any = {}) {
+  const { scheduler } = options;
+  const _effect = new ReactiveEffect(fn, scheduler);
   _effect.run();
+  const runner = _effect.run.bind(_effect);
   // _effect bind里面的this
-  return _effect.run.bind(_effect);
+  return runner;
 }
