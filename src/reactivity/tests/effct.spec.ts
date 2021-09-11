@@ -1,5 +1,5 @@
 import { reactive } from "../reactive";
-import { effect } from "../effect";
+import { effect, stop } from "../effect";
 describe("effect", () => {
   it("happy path", () => {
     const user = reactive({
@@ -54,5 +54,55 @@ describe("effect", () => {
     expect(scheduler).toHaveBeenCalledTimes(1);
     run();
     expect(sum).toBe(2);
+  });
+
+  it("stop的实现", () => {
+    /**
+     * 执行stop时不去执行effect里的函数
+     */
+    let obj = reactive({
+      count: 0,
+    });
+    let sum;
+    const runner = effect(() => {
+      sum = obj.count;
+    });
+    obj.count = 1;
+    expect(sum).toBe(1);
+
+    // 不然里面执行 sum应该没变
+    stop(runner);
+    obj.count = 2;
+    expect(sum).toBe(1);
+
+    runner();
+    expect(sum).toBe(2);
+  });
+
+  it("onStop的实现", () => {
+    /**
+     * 执行stop时不去执行effect里的函数
+     * 但是执行onStop
+     */
+    let obj = reactive({
+      count: 0,
+    });
+    let sum;
+    const onStop = jest.fn(() => {
+      console.log("onsetp执行");
+    });
+    const runner = effect(
+      () => {
+        sum = obj.count;
+      },
+      {
+        onStop,
+      }
+    );
+    stop(runner);
+    obj.count = 1;
+    expect(sum).toBe(0);
+    //执行一次onStop方法
+    expect(onStop).toHaveBeenCalledTimes(1);
   });
 });
