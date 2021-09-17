@@ -1,10 +1,12 @@
+import { extend } from "../shared";
 let activeEffect;
 
 // 依赖收集类
 class ReactiveEffect {
   private _fn: any;
   deps = [];
-  onStop: any;
+  onStop?: () => void;
+  isActive = true;
   constructor(fn, public scheduler?) {
     this._fn = fn;
   }
@@ -14,14 +16,22 @@ class ReactiveEffect {
     return this._fn();
   }
   stop() {
-    if (this.onStop) {
-      this.onStop();
+    // 防止stop多次执行
+    if (this.isActive) {
+      if (this.onStop) {
+        this.onStop();
+      }
+      cleanEffect(this);
+      this.isActive = false;
     }
-    this.deps.forEach((dep: any) => {
-      dep.delete(this);
-    });
   }
 }
+function cleanEffect(effect) {
+  effect.deps.forEach((dep: any) => {
+    dep.delete(effect);
+  });
+}
+
 // 用来存储不同对象的deps
 const targetMap = new Map();
 
@@ -39,9 +49,12 @@ export function track(target, key) {
     dep = new Set();
     depsMap.set(key, dep);
   }
-  dep.add(activeEffect);
-  //利用activeEffect把deps收集起来
-  activeEffect.deps.push(dep);
+  if (activeEffect) {
+    dep.add(activeEffect);
+    //利用activeEffect把deps收集起来
+    activeEffect.deps.push(dep);
+    activeEffect = undefined;
+  }
 }
 // 触发依赖
 export function trigger(target, key) {
@@ -57,12 +70,13 @@ export function trigger(target, key) {
   }
 }
 //依赖收集
+//effct才会把_effect挂载到activeEffect
 export function effect(fn, options: any = {}) {
   const { scheduler, onStop } = options;
   const _effect = new ReactiveEffect(fn, scheduler);
   // _effect.onStop = onStop;
   //把options全部挂载到_effect上
-  Object.assign(_effect, options);
+  extend(_effect, options); //语义化重构
   // 第一次执行先运行fn
   _effect.run();
   const runner: any = _effect.run.bind(_effect);
