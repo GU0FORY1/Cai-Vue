@@ -72,7 +72,8 @@ describe("effect", () => {
 
     // 不然里面执行 sum应该没变
     stop(runner);
-    obj.count = 2;
+    // obj.count = 2;
+    obj.count++;
     expect(sum).toBe(1);
 
     runner();
