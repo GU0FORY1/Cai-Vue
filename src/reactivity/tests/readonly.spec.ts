@@ -1,4 +1,4 @@
-import { readonly } from "../reactive";
+import { isReadonly, readonly } from "../reactive";
 
 describe("readonly", () => {
   it("happy path ", () => {
@@ -8,6 +8,8 @@ describe("readonly", () => {
     obj.count = 2;
     expect(obj).not.toBe(raw);
     expect(obj.count).toBe(1);
+    expect(isReadonly(obj)).toBe(true);
+    expect(isReadonly(raw)).toBe(false);
   });
 
   it("set时报错", () => {
