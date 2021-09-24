@@ -1,5 +1,6 @@
 import { extend } from "../shared";
 let activeEffect;
+let shouldTrack;
 
 // 依赖收集类
 class ReactiveEffect {
@@ -11,9 +12,20 @@ class ReactiveEffect {
     this._fn = fn;
   }
   run() {
-    activeEffect = this;
     //runner运行后 要的返回值
-    return this._fn();
+    // stop 下的状态 不用收集依赖
+    if (!this.isActive) {
+      return this._fn();
+    }
+    // 保存当前执行的fn
+    activeEffect = this;
+    // 设置需要收集标识
+    shouldTrack = true;
+    // 执行fn的时候 就会访问响应式数据中的get 从而触发依赖收集
+    const result = this._fn();
+    // 重置需要收集标识  以防收集到不需要收集的依赖
+    shouldTrack = false;
+    return result;
   }
   stop() {
     // 防止stop多次执行
@@ -30,6 +42,8 @@ function cleanEffect(effect) {
   effect.deps.forEach((dep: any) => {
     dep.delete(effect);
   });
+  // 优化点
+  effect.deps.length = 0;
 }
 
 // 用来存储不同对象的deps
@@ -37,6 +51,9 @@ const targetMap = new Map();
 
 // 依赖收集
 export function track(target, key) {
+  // 判断是否收集依赖
+  if (!isTracking()) return;
+
   // taget => key => dep
   // dep存储的是每个key对应的依赖 [fn1,fn2,fn3]
   let depsMap = targetMap.get(target);
@@ -49,12 +66,15 @@ export function track(target, key) {
     dep = new Set();
     depsMap.set(key, dep);
   }
-  if (activeEffect) {
-    dep.add(activeEffect);
-    //利用activeEffect把deps收集起来
-    activeEffect.deps.push(dep);
-    activeEffect = undefined;
-  }
+  // 处理重复依赖
+  if (dep.has(activeEffect)) return;
+  dep.add(activeEffect);
+  // 反向收集  把当前的所有依赖 放入effect当中 比如在使用停止函数的时候进行使用
+  activeEffect.deps.push(dep);
+}
+//判断当前能否收集依赖
+function isTracking() {
+  return shouldTrack && activeEffect !== undefined;
 }
 // 触发依赖
 export function trigger(target, key) {
