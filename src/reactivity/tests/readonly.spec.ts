@@ -20,4 +20,14 @@ describe("readonly", () => {
     obj.count = 2;
     expect(console.warn).toBeCalled();
   });
+
+  it("readonly 嵌套对象 ", () => {
+    let raw = {
+      foo: { a: 1 },
+      arr: [{ age: 1 }],
+    };
+    let obj = readonly(raw);
+    expect(isReadonly(obj.foo)).toBe(true);
+    expect(isReadonly(obj.arr)).toBe(true);
+  });
 });

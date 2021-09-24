@@ -8,4 +8,14 @@ describe("reactive", () => {
     expect(isReactive(observed)).toBe(true);
     expect(isReactive(original)).toBe(false);
   });
+
+  it("reactive 嵌套对象 ", () => {
+    let raw = {
+      foo: { a: 1 },
+      arr: [{ age: 1 }],
+    };
+    let obj = reactive(raw);
+    expect(isReactive(obj.foo)).toBe(true);
+    expect(isReactive(obj.arr)).toBe(true);
+  });
 });
