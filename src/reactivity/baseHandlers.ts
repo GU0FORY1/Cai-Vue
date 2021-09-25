@@ -1,9 +1,9 @@
-import { isObject } from "../shared";
+import { extend, isObject } from "../shared";
 import { track, trigger } from "./effect";
 import { reactive, ReactiveFlags, readonly } from "./reactive";
 
 // get函数创造器
-function createGetter(isReadonly = false) {
+function createGetter(isReadonly = false, shallow = false) {
   return function get(target, key) {
     if (key === ReactiveFlags.IS_REACTIVE) {
       return !isReadonly;
@@ -11,6 +11,10 @@ function createGetter(isReadonly = false) {
       return isReadonly;
     }
     const res = Reflect.get(target, key);
+    // 判断是否为表层Readonly
+    if (shallow) {
+      return res;
+    }
     // 解决嵌套对象 判断是否为对象 若为对象则包裹
     if (isObject(res)) {
       return isReadonly ? readonly(res) : reactive(res);
@@ -35,6 +39,7 @@ function createSetter() {
 const get = createGetter();
 const set = createSetter();
 const readonlyGet = createGetter(true);
+const shallowReadonlyGet = createGetter(true, true);
 
 // reactive的
 export const mutablerHsndlers = {
@@ -49,3 +54,7 @@ export const readonlyHandlers = {
     return true;
   },
 };
+// shallowReadonly的
+export const shallowReadonlyHandlers = extend({}, readonlyHandlers, {
+  get: shallowReadonlyGet,
+});
