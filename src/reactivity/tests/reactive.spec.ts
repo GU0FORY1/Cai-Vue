@@ -1,4 +1,4 @@
-import { isReactive, reactive } from "../reactive";
+import { isProxy, isReactive, reactive } from "../reactive";
 describe("reactive", () => {
   it("happy path", () => {
     const original = { age: 10 };
@@ -7,6 +7,7 @@ describe("reactive", () => {
     expect(observed.age).toBe(10);
     expect(isReactive(observed)).toBe(true);
     expect(isReactive(original)).toBe(false);
+    expect(isProxy(observed)).toBe(true);
   });
 
   it("reactive 嵌套对象 ", () => {
