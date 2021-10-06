@@ -66,6 +66,11 @@ export function track(target, key) {
     dep = new Set();
     depsMap.set(key, dep);
   }
+
+  trackEffect(dep);
+}
+//收集依赖
+export function trackEffect(dep) {
   // 处理重复依赖
   if (dep.has(activeEffect)) return;
   dep.add(activeEffect);
@@ -73,13 +78,18 @@ export function track(target, key) {
   activeEffect.deps.push(dep);
 }
 //判断当前能否收集依赖
-function isTracking() {
+export function isTracking() {
   return shouldTrack && activeEffect !== undefined;
 }
 // 触发依赖
 export function trigger(target, key) {
   let despMap = targetMap.get(target);
   let dep = despMap.get(key);
+
+  triggerEffects(dep);
+}
+// 执行依赖
+export function triggerEffects(dep) {
   // for of 遍历数组 forin遍历对象
   for (const effect of dep) {
     if (effect.scheduler) {
