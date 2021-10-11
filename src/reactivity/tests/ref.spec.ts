@@ -26,4 +26,17 @@ describe("ref", () => {
     expect(c).toBe(2);
     expect(b).toBe(2);
   });
+
+  it("ref传入object时的处理", () => {
+    const a = ref({
+      age: 1,
+    });
+    let tmp;
+    effect(() => {
+      tmp = a.value.age;
+    });
+    expect(tmp).toBe(1);
+    a.value.age = 12;
+    expect(tmp).toBe(12);
+  });
 });
