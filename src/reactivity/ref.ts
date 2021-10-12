@@ -56,3 +56,21 @@ export function isRef(ref) {
 export function unRef(ref) {
   return isRef(ref) ? ref.value : ref;
 }
+
+export function proxyRefs(objectWithRefs) {
+  return new Proxy(objectWithRefs, {
+    get(target, key) {
+      //是ref则返回。value 否则返回本身
+      return unRef(Reflect.get(target, key));
+    },
+    set(target, key, value) {
+      //原来为ref 切新值不为 ref 直接修改
+      // 其他情况直接替换
+      if (isRef(target[key]) && !isRef(value)) {
+        return (target[key].value = value);
+      } else {
+        return Reflect.set(target, key, value);
+      }
+    },
+  });
+}

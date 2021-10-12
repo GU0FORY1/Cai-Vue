@@ -1,6 +1,6 @@
 import { effect } from "../effect";
 import { reactive } from "../reactive";
-import { isRef, ref, unRef } from "../ref";
+import { isRef, proxyRefs, ref, unRef } from "../ref";
 
 describe("ref", () => {
   it("happy path", () => {
@@ -55,5 +55,27 @@ describe("ref", () => {
     const obj = reactive({ a: 1 });
     expect(unRef(a)).toBe(1);
     expect(unRef(1)).toBe(1);
+  });
+
+  //template中用到 直接访问ref
+  it("proxyRefs ref省略.value访问", () => {
+    const user = {
+      age: ref(10),
+      name: "tom",
+    };
+    const proxyUser = proxyRefs(user);
+    expect(user.age.value).toBe(10);
+    //get ref? ref.value: ref
+    expect(proxyUser.age).toBe(10);
+    expect(proxyUser.name).toBe("tom");
+
+    //set 普通值
+    proxyUser.age = 10;
+    expect(proxyUser.age).toBe(10);
+    expect(user.age.value).toBe(10);
+    //set ref
+    proxyUser.age = ref(20);
+    expect(proxyUser.age).toBe(20);
+    expect(user.age.value).toBe(20);
   });
 });
