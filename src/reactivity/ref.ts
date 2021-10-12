@@ -27,10 +27,11 @@ class RefImpl {
     // 如果用=== 新旧值都为NaN时则会触发更新
     // 优化
     //这里用this._value比较有问题 可能是reactive包裹后的 所以要存储一个原始的
-    if (hasChanged(this._value, newValue)) return;
-    this._rawValue = this.value;
-    this._value = convert(newValue);
-    triggerEffects(this.dep);
+    if (hasChanged(this._rawValue, newValue)) {
+      this._rawValue = newValue;
+      this._value = convert(newValue);
+      triggerEffects(this.dep);
+    }
   }
 }
 
