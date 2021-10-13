@@ -3,7 +3,7 @@ let activeEffect;
 let shouldTrack;
 
 // 依赖收集类
-class ReactiveEffect {
+export class ReactiveEffect {
   private _fn: any;
   deps = [];
   onStop?: () => void;
