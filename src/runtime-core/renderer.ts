@@ -4,6 +4,7 @@ export function render(vnode, container) {
   patch(vnode, container);
 }
 function patch(vnode, container) {
+  // 判断是element还是component 进行区分处理
   processComponent(vnode, container);
 }
 
@@ -16,6 +17,7 @@ function processComponent(vnode, container) {
 function mountComponent(vnode, container) {
   const instance = createComponentInstance(vnode);
   setupComponent(instance);
+  setupRenderEffect(instance, container);
 }
 //执行render 进行patch
 function setupRenderEffect(instance, container) {
