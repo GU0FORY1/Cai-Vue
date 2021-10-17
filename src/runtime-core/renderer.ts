@@ -19,18 +19,22 @@ function processComponent(vnode, container) {
 }
 
 //挂载组件
-function mountComponent(vnode, container) {
-  const instance = createComponentInstance(vnode);
+function mountComponent(initVNode, container) {
+  const instance = createComponentInstance(initVNode);
   setupComponent(instance);
-  setupRenderEffect(instance, container);
+  setupRenderEffect(instance, initVNode, container);
 }
 //执行render 进行patch
-function setupRenderEffect(instance, container) {
+function setupRenderEffect(instance, initVNode, container) {
   //render返回虚拟节点树
   //上一步时已将render挂载到实例上
-  const subTree = instance.render();
+  const { proxy } = instance;
+  //或得proxy对象 更改this指向取到state
+  const subTree = instance.render.call(proxy);
 
   patch(subTree, container);
+  //mount完毕挂到el
+  initVNode.el = subTree.el;
 }
 //处理element
 function processElement(vnode, container) {
@@ -39,8 +43,10 @@ function processElement(vnode, container) {
 
 //u挂载元素
 function mountELement(vnode, container) {
+  //这里的vnode是element类型的 要取到el需要挂载到component类型上去
   //tag
   const el = document.createElement(vnode.type);
+  vnode.el = el;
   //props
   const { props, children } = vnode;
   //遍历props赋值
