@@ -5,7 +5,15 @@ export default {
         // return h('div',{},'hello'+this.msg)
         window.self = this
         // return h('div',{},'console root')
-        return h('div',{},[h('div',{},'hello'),h('div',{},'wolrd')])
+        return h('div',{},[h('div',{},'hello'),h('div',
+        {
+            onClick(){
+                console.log('点击了')
+            },
+            onMousemove(){
+                console.log('移动')
+            }
+        },'click')])
     },
     //状态
     setup(){

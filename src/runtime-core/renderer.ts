@@ -53,7 +53,15 @@ function mountELement(vnode, container) {
   //遍历props赋值
   for (const key in props) {
     const value = props[key];
-    el.setAttribute(key, value);
+    //是否符合onXxx
+    const isOn = (key) => /^on[A-Z]/.test(key);
+    //处理注册事件
+    if (isOn(key)) {
+      const event = key.slice(2).toLocaleLowerCase();
+      el.addEventListener(event, value);
+    } else {
+      el.setAttribute(key, value);
+    }
   }
   //children
   // 1、string 2、array
