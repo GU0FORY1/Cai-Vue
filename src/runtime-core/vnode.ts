@@ -17,5 +17,7 @@ export function createVNode(type, props?, children?) {
   return vnode;
 }
 function getShapeFlags(type) {
-  return type === "string" ? ShapeFlags.ELEMENT : ShapeFlags.STATEFUL_COMPONENT;
+  return typeof type === "string"
+    ? ShapeFlags.ELEMENT
+    : ShapeFlags.STATEFUL_COMPONENT;
 }
