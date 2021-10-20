@@ -1,4 +1,5 @@
 import { h } from "../../lib/cai-vue.esm.js";
+import Props from "./Props.js";
 export default {
     //渲染视图
     render(){
@@ -13,7 +14,9 @@ export default {
             onMousemove(){
                 console.log('移动')
             }
-        },'click')])
+        },'click'),
+        h(Props,{count:3,age:12})
+    ])
     },
     //状态
     setup(){

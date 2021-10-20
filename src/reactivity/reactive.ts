@@ -1,3 +1,4 @@
+import { isObject } from "../shared";
 import {
   mutablerHsndlers,
   readonlyHandlers,
@@ -10,15 +11,15 @@ export const enum ReactiveFlags {
 }
 
 export function reactive(raw) {
-  return new Proxy(raw, mutablerHsndlers);
+  return createReactiveObject(raw, mutablerHsndlers);
 }
 
 export function readonly(raw) {
-  return new Proxy(raw, readonlyHandlers);
+  return createReactiveObject(raw, readonlyHandlers);
 }
 
 export function shallowReadonly(raw) {
-  return new Proxy(raw, shallowReadonlyHandlers);
+  return createReactiveObject(raw, shallowReadonlyHandlers);
 }
 
 export function isReactive(value) {
@@ -32,4 +33,12 @@ export function isReadonly(value) {
 
 export function isProxy(value) {
   return isReadonly(value) || isReactive(value);
+}
+
+export function createReactiveObject(target, baseHandlers) {
+  if (!isObject(target)) {
+    console.warn(`target ${target} 必须是一个对象`);
+    return target;
+  }
+  return new Proxy(target, baseHandlers);
 }

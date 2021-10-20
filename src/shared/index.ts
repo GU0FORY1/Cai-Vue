@@ -9,3 +9,5 @@ export const isObject = (val) => {
 export const hasChanged = (value, newValue) => {
   return !Object.is(value, newValue);
 };
+
+export const hsaOwn = (target, key) => Reflect.has(target, key);
