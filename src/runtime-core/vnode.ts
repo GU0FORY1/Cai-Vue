@@ -13,11 +13,8 @@ export function createVNode(type, props?, children?) {
     vnode.shapeFlag = vnode.shapeFlag | ShapeFlags.TEXT_CHILDREN;
   } else if (Array.isArray(children)) {
     vnode.shapeFlag = vnode.shapeFlag | ShapeFlags.ARRAY_CHILDREN;
-  } else {
-    vnode.shapeFlag = vnode.shapeFlag | ShapeFlags.TEXT_CHILDREN;
-    // 为了判读其他类型 eg: number..
-    vnode.children = String(vnode.children);
   }
+
   return vnode;
 }
 function getShapeFlags(type) {
