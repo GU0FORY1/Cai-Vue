@@ -1,4 +1,4 @@
-import { h } from "../../lib/cai-vue.esm.js";
+import { h,createTextNode } from "../../lib/cai-vue.esm.js";
 import Foo from "./Foo.js";
 export default {
     render(){
@@ -19,7 +19,7 @@ export default {
         // 作用域
         return h('div',{},[h(Foo,{},
             {
-               header: ({age})=>h('h1',{},'header'+age),
+               header: ({age})=>[h('h1',{},'header'+age),createTextNode('我是textnode')],
                footer: ()=>h('h1',{},'footer')
             })])
     },
