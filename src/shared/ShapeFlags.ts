@@ -23,4 +23,5 @@ export enum ShapeFlags {
   STATEFUL_COMPONENT = 1 << 1, //左位移一位 0010
   TEXT_CHILDREN = 1 << 2, //0100
   ARRAY_CHILDREN = 1 << 3, // 1000
+  SLOTS_CHILDREN = 1 << 4, // 10000
 }
