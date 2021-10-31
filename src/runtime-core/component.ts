@@ -3,7 +3,7 @@ import { emit } from "./componentEmit";
 import { initProps } from "./componentProps";
 import { PublicInstanceProxyHandlers } from "./componentPublicInstance";
 import { initSlots } from "./componentSlots";
-
+let currentInstance = null;
 //初始化一个组件实例
 export function createComponentInstance(vnode) {
   const component = {
@@ -36,11 +36,14 @@ export function setupStatefulComponent(instance) {
 
   const { setup } = Component;
   if (setup) {
+    //getCurrentInsance 必须在setup里才能用
+    setCurrentInstance(instance);
     //props给到setup
     // props不可修改 shallowReadonly
     const setupResult = setup(shallowReadonly(instance.props), {
       emit: instance.emit,
     });
+    setCurrentInstance(null);
     //把执行结果挂载到实例
     handleSetupResult(instance, setupResult);
   }
@@ -61,4 +64,12 @@ function finishComponentSetup(instance: any) {
   if (Component.render) {
     instance.render = Component.render;
   }
+}
+
+export function getCurrentInstance() {
+  return currentInstance;
+}
+
+function setCurrentInstance(instance) {
+  currentInstance = instance;
 }
