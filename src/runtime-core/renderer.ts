@@ -1,16 +1,25 @@
 import { isObject, ShapeFlags } from "../shared";
 import { createComponentInstance, setupComponent } from "./component";
+import { Fragment } from "./vnode";
 
 export function render(vnode, container) {
   patch(vnode, container);
 }
 function patch(vnode, container) {
   // 判断是element还是component 进行区分处理
-  const { shapeFlag } = vnode;
-  if (shapeFlag & ShapeFlags.ELEMENT) {
-    processElement(vnode, container);
-  } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
-    processComponent(vnode, container);
+  const { shapeFlag, type } = vnode;
+
+  switch (type) {
+    case Fragment:
+      processFragment(vnode, container);
+      break;
+    default:
+      if (shapeFlag & ShapeFlags.ELEMENT) {
+        processElement(vnode, container);
+      } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
+        processComponent(vnode, container);
+      }
+      break;
   }
 }
 
@@ -79,4 +88,9 @@ function mountChildren(vnode, container) {
   vnode.children.forEach((item) => {
     patch(item, container);
   });
+}
+
+function processFragment(vnode: any, container: any) {
+  //直接渲染子节点
+  mountChildren(vnode, container);
 }
