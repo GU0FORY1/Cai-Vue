@@ -2,8 +2,8 @@
 //custrender核心就是把原来创建元素、设置元素属性、添加元素的方法抽离出来
 import { createRenderer } from "../runtime-core";
 
-function createElement(vnode) {
-  return document.createElement(vnode.type);
+function createElement(type) {
+  return document.createElement(type);
 }
 function patchProp(el, key, value) {
   //是否符合onXxx
