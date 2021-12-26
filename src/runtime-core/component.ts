@@ -5,12 +5,15 @@ import { PublicInstanceProxyHandlers } from "./componentPublicInstance";
 import { initSlots } from "./componentSlots";
 let currentInstance = null;
 //初始化一个组件实例
-export function createComponentInstance(vnode) {
+export function createComponentInstance(vnode, parent) {
   const component = {
     vnode,
     type: vnode.type,
     setupState: {},
     props: {},
+    //初始化provides
+    provides: parent ? parent.provides : {},
+    parent,
     slots: {},
     emit: () => {},
   };
