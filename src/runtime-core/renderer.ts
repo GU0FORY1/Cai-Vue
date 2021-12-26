@@ -101,19 +101,24 @@ export function createRenderer(options) {
      * 3、值删除
      */
     //遍历新的看看值是否改变
-    for (const key in nextProps) {
-      const oldProp = oldProps[key];
-      const nextProp = nextProps[key];
-      if (oldProp !== nextProps) {
-        //处理
-        patchProp(el, key, oldProp, nextProp);
+    if (oldProps !== nextProps) {
+      for (const key in nextProps) {
+        const oldProp = oldProps[key];
+        const nextProp = nextProps[key];
+        if (oldProp !== nextProps) {
+          //处理
+          patchProp(el, key, oldProp, nextProp);
+        }
       }
-    }
-    //遍历老的看看是否删除
-    for (const key in oldProps) {
-      //删除的话则remove
-      if (!(key in nextProps)) {
-        patchProp(el, key, oldProps[key], null);
+      //判断新的不是空对象
+      if (Object.keys(nextProps)) {
+        //遍历老的看看是否删除
+        for (const key in oldProps) {
+          //删除的话则remove
+          if (!(key in nextProps)) {
+            patchProp(el, key, oldProps[key], null);
+          }
+        }
       }
     }
   }
