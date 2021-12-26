@@ -30,7 +30,7 @@ const renderer: any = createRenderer({
 //包装一层方便用户调用
 export function createApp(...args) {
   //实际调用createAppApi方法返回的方法 用于创建初始化
-  return renderer.crateApp(...args);
+  return renderer.createApp(...args);
 }
 
 export * from "../runtime-core";
