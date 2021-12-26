@@ -86,6 +86,36 @@ export function createRenderer(options) {
     console.log("patchElement");
     console.log("n1", n1);
     console.log("n2", n2);
+
+    const oldProps = n1.props || {};
+    const nextProps = n2.props || {};
+    const el = (n2.el = n1.el);
+
+    patchProps(el, oldProps, nextProps);
+  }
+  //处理props
+  function patchProps(el, oldProps, nextProps) {
+    /**
+     * 1、值改变
+     * 2、值无效 undefined null
+     * 3、值删除
+     */
+    //遍历新的看看值是否改变
+    for (const key in nextProps) {
+      const oldProp = oldProps[key];
+      const nextProp = nextProps[key];
+      if (oldProp !== nextProps) {
+        //处理
+        patchProp(el, key, oldProp, nextProp);
+      }
+    }
+    //遍历老的看看是否删除
+    for (const key in oldProps) {
+      //删除的话则remove
+      if (!(key in nextProps)) {
+        patchProp(el, key, oldProps[key], null);
+      }
+    }
   }
 
   //u挂载元素
@@ -102,7 +132,7 @@ export function createRenderer(options) {
     for (const key in props) {
       const value = props[key];
       //patchProp替代
-      patchProp(el, key, value);
+      patchProp(el, key, null, value);
     }
 
     //children

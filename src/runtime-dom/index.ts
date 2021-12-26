@@ -5,15 +5,19 @@ import { createRenderer } from "../runtime-core";
 function createElement(type) {
   return document.createElement(type);
 }
-function patchProp(el, key, value) {
+function patchProp(el, key, oldValue, nextValue) {
   //是否符合onXxx
   const isOn = (key) => /^on[A-Z]/.test(key);
   //处理注册事件
   if (isOn(key)) {
     const event = key.slice(2).toLocaleLowerCase();
-    el.addEventListener(event, value);
+    el.addEventListener(event, nextValue);
   } else {
-    el.setAttribute(key, value);
+    if (nextValue === undefined || nextValue === null) {
+      el.removeAttribute(key);
+    } else {
+      el.setAttribute(key, nextValue);
+    }
   }
 }
 function insert(el, container) {
