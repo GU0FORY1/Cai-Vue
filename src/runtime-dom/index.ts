@@ -24,11 +24,25 @@ function insert(el, container) {
   container.append(el);
 }
 
+function remove(child) {
+  //把父级里的子节点都删除
+  const parent = child.parentNode;
+  if (parent) {
+    parent.removeChild(child);
+  }
+}
+
+function setElementText(container, text) {
+  container.textContent = text;
+}
+
 //把处理方法注入 返回{crateApp}
 const renderer: any = createRenderer({
   createElement,
   patchProp,
   insert,
+  remove,
+  setElementText,
 });
 
 //包装一层方便用户调用
